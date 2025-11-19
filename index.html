@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noohu Mufeez | Car X Camera</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg: #0a1024;
+      --card: #121b36;
+      --text: #eaeaea;
+      --text-muted: #9ca3af;
+      --accent: #3b82f6;
+    }
+    html { scroll-behavior: smooth; }
+    body.modal-open { overflow: hidden; }
+
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .btn-accent:hover {
+      background: #1d4ed8;
+      transform: scale(1.05);
+    }
+
+    .portfolio-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--bg);
+    }
+    .portfolio-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .portfolio-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+
+    /* MODAL */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #modal img,
+    #modal video,
+    #modal iframe {
+      max-height: 85vh;
+      max-width: 95vw;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      object-fit: contain;
+    }
+    #close-modal {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 3rem;
+      color: white;
+      cursor: pointer;
+      z-index: 10;
+      transition: color 0.2s;
+    }
+    #close-modal:hover { color: #60a5fa; }
+  </style>
+</head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+
+  <!-- Navbar -->
+  <!-- <nav class="fixed top-0 left-0 w-full bg-[var(--bg)]/90 backdrop-blur-md shadow-lg z-40">
+    <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+      <a href="#hero" class="text-3xl font-bold text-white">Car X Camera</a>
+      <div class="hidden md:flex space-x-10 text-lg">
+        <a href="#hero" class="hover:text-[var(--accent)]">Home</a>
+        <a href="#portfolio" class="hover:text-[var(--accent)]">Portfolio</a>
+        <a href="#about" class="hover:text-[var(--accent)]">About</a>
+        <a href="#gallery" class="hover:text-[var(--accent)]">Gallery</a>
+        <a href="#contact" class="hover:text-[var(--accent)]">Contact</a>
+      </div>
+      <button id="menu-toggle" class="md:hidden text-white">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </div>
+  </nav> -->
+
+      <nav id="navbar" class="fixed top-0 left-0 w-full bg-[var(--bg)]/90 backdrop-blur-md shadow-lg z-40 transition-shadow">
+        <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="#hero" class="text-3xl font-bold text-white">Car X Camera</a>
+            <div class="hidden md:flex space-x-10 text-lg">
+                <a href="#hero" class="hover:text-[var(--accent)] transition-colors">Home</a>
+                <a href="#portfolio" class="hover:text-[var(--accent)] transition-colors">Portfolio</a>
+                <a href="#about" class="hover:text-[var(--accent)] transition-colors">About</a>
+                <a href="#gallery" class="hover:text-[var(--accent)] transition-colors">Gallery</a>
+                <a href="#contact" class="hover:text-[var(--accent)] transition-colors">Contact</a>
+            </div>
+            <!-- <button id="menu-toggle" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button> -->
+
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-2xl transition-transform"></i>
+            </button>
+
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[var(--bg)]/95 backdrop-blur-md shadow-xl">
+            <div class="container mx-auto px-6 py-6 flex flex-col space-y-5 text-lg">
+                <a href="#hero" class="hover:text-[var(--accent)] transition-colors">Home</a>
+                <a href="#portfolio" class="hover:text-[var(--accent)] transition-colors">Portfolio</a>
+                <a href="#about" class="hover:text-[var(--accent)] transition-colors">About</a>
+                <a href="#gallery" class="hover:text-[var(--accent)] transition-colors">Gallery</a>
+                <a href="#contact" class="hover:text-[var(--accent)] transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+  <!-- Hero -->
+  <section id="hero" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1600" alt="Hero" class="w-full h-full object-cover opacity-70">
+      <div class="absolute inset-0 bg-gradient-to-b from-[var(--bg)]/70 via-transparent to-[var(--bg)]/80"></div>
+    </div>
+    <div class="relative z-10 px-6 max-w-5xl mx-auto">
+      <h1 class="text-6xl md:text-7xl font-bold text-white mb-6">Noohu Mufeez</h1>
+      <p class="text-2xl text-[var(--text-muted)] mb-10">
+        <span style="color: whitesmoke;">Professional Photographer</span><br>
+        <span style="color: whitesmoke;">Capturing Automobiles in Lights & Shadow</span>
+      </p>
+      <a href="#contact" class="btn-accent px-10 py-4 rounded-full text-lg shadow-lg">Contact to Capture</a>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <section id="portfolio" class="py-24 bg-[var(--card)]/30">
+    <div class="container mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-4 text-white">Portfolio</h2>
+      <p class="text-center text-[var(--text-muted)] max-w-3xl mx-auto mb-16 text-lg">Curated moments that speak volumes</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="portfolio-item" data-img="./assets/25.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/25.jpg" alt="BMW" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Bayerische Motoren Werke</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/26.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/26.jpg" alt="Low Angle" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Low Angle</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/27.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/27.jpg" alt="Detailed" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Detailed</p></div>
+        </div>
+        <!-- Repeat as needed -->
+        <div class="portfolio-item" data-img="./assets/28.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/28.jpg" alt="BMW" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Alloys</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/29.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/29.jpg" alt="Low Angle" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Hood</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/30.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/30.jpg" alt="Detailed" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Wallpaper</p></div>
+        </div>
+<!-- repeate as needed  -->
+         <div class="portfolio-item" data-img="./assets/37.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/37.jpg" alt="BMW" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Aston Martin</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/32.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/32.jpg" alt="Low Angle" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Featured</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/36.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/36.jpg" alt="Detailed" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Aston Martin</p></div>
+        </div>
+
+        <div class="portfolio-item" data-img="./assets/34.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/34.jpg" alt="BMW" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Audi</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/35.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/35.jpg" alt="Low Angle" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Magazine</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/33.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/33.jpg" alt="Detailed" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Front Facing</p></div>
+        </div>
+
+        <!-- repeate as needed  -->
+
+        <div class="portfolio-item" data-img="./assets/31.jpg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/31.jpg" alt="BMW" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>M4</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/38.jpeg" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/38.jpeg" alt="Low Angle" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Magazine</p></div>
+        </div>
+        <div class="portfolio-item" data-img="./assets/39.png" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/39.png" alt="Detailed" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Template</p></div>
+        </div>
+
+        <!-- repeate as needed  -->
+
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-24 bg-[var(--bg)]">
+    <div class="container mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
+      <img src="./assets/mufeez.jpg" alt="Noohu" class="w-72 h-72 rounded-full object-cover ring-4 ring-[var(--accent)]/30 shadow-2xl">
+      <div class="max-w-2xl space-y-6">
+        <h2 class="text-5xl font-bold text-white">About Me</h2>
+        <p class="text-lg text-[var(--text-muted)]">
+          I'm Noohu Mufeez, a Madras-based photographer with over half a decade of experience.
+          I specialize in capturing automobiles through natural light, embracing every curve and reflection.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+          <div class="bg-[var(--card)] p-6 rounded-xl text-center border border-[var(--accent)]/10">
+            <i class="fas fa-award text-3xl text-[var(--accent)] mb-3"></i>
+            <p class="font-semibold text-white">Award-Winning</p>
+            <p class="text-sm text-[var(--text-muted)]">MotoGraphy Artist</p>
+          </div>
+          <div class="bg-[var(--card)] p-6 rounded-xl text-center border border-[var(--accent)]/10">
+            <i class="fas fa-globe text-3xl text-[var(--accent)] mb-3"></i>
+            <p class="font-semibold text-white">Featured In</p>
+            <p class="text-sm text-[var(--text-muted)]">University Recognition</p>
+          </div>
+          <div class="bg-[var(--card)] p-6 rounded-xl text-center border border-[var(--accent)]/10">
+            <i class="fas fa-users text-3xl text-[var(--accent)] mb-3"></i>
+            <p class="font-semibold text-white">150+</p>
+            <p class="text-sm text-[var(--text-muted)]">Happy Clients</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Gallery -->
+  <section id="gallery" class="py-24 bg-[var(--card)]/30">
+    <div class="container mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-4 text-white">Video Gallery</h2>
+      <p class="text-center text-[var(--text-muted)] max-w-3xl mx-auto mb-16 text-lg">Visual stories captured in motion</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="portfolio-item video-item" data-video="./assets/v4.mp4" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/38.jpeg" alt="Video v4" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Behind The Lens</p></div>
+        </div>
+        <div class="portfolio-item video-item" data-video="./assets/v2.mp4" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/32.jpg" alt="Video v2" class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>Low Angle Drive</p></div>
+        </div>
+        <div class="portfolio-item video-item"  data-video="./assets/v3.mp4" data-ig="https://www.instagram.com/_capital_letter_/">
+          <img src="./assets/37.jpg" alt="Video v3 " class="w-full h-80 object-cover rounded-xl">
+          <div class="portfolio-overlay"><p>YouTube Reel</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-24 bg-[var(--bg)]">
+    <div class="container mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-16 text-white">Get In Touch</h2>
+      <div class="max-w-lg mx-auto bg-[var(--card)] p-8 rounded-2xl shadow-2xl border border-white/5 text-center">
+        <p class="text-lg text-[var(--text-muted)] mb-4">
+          <strong class="text-white">Email:</strong>
+          <a href="mailto:noohumufeez@gmail.com" class="text-[var(--accent)] hover:underline">noohumufeez@gmail.com</a>
+        </p>
+        <p class="text-lg text-[var(--text-muted)] mb-4">
+          <strong class="text-white">Phone:</strong>
+          <a href="tel:+917539989429" class="text-[var(--accent)] hover:underline">+91 7539989429</a>
+        </p>
+        <p class="text-lg text-[var(--text-muted)] mb-4">
+          <strong class="text-white">Instagram:</strong>
+          <a href="https://www.instagram.com/_capital_letter_/" target="_blank" class="text-[var(--accent)] hover:underline">@_capital_letter_</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[var(--card)] py-8 text-center border-t border-white/5">
+    <p class="text-[var(--text-muted)] text-lg">© 2025 Noohu Mufeez. All rights reserved.</p>
+  </footer>
+
+  <!-- MODAL -->
+  <div id="modal">
+    <button id="close-modal">×</button>
+    <div id="modal-content" class="text-center">
+      <div id="modal-media"></div>
+      <div class="mt-8">
+        <a id="ig-btn" href="https://www.instagram.com/_capital_letter_/" target="https://www.instagram.com/_capital_letter_/"
+           class="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-4 rounded-full text-lg font-medium hover:scale-105 transition shadow-2xl">
+          <i class="fab fa-instagram text-2xl"></i>
+          View on Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const modalMedia = document.getElementById('modal-media');
+    const closeBtn = document.getElementById('close-modal');
+    const igBtn = document.getElementById('ig-btn');
+
+    // Open Modal
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const isVideo = item.classList.contains('video-item');
+        const src = isVideo ? item.dataset.video : item.dataset.img;
+        const ig = item.dataset.ig || 'https://www.instagram.com/_capital_letter_/';
+        igBtn.href = ig;   // always set it, never undefined
+
+        modalMedia.innerHTML = '';
+        igBtn.href = ig;
+
+        let media;
+        if (isVideo) {
+          if (src.includes('youtube.com')) {
+            media = document.createElement('iframe');
+            media.src = src;
+            media.allow = 'autoplay; fullscreen';
+            media.className = 'w-full aspect-video';
+          } else {
+            media = document.createElement('video');
+            media.src = src;
+            media.controls = true;
+            media.autoplay = true;
+          }
+        } else {
+          media = document.createElement('img');
+          media.src = src;
+          media.alt = 'Photo';
+        }
+        media.className = 'mx-auto';
+        modalMedia.appendChild(media);
+
+        modal.classList.add('active');
+        document.body.classList.add('modal-open');
+      });
+    });
+
+    // Close Modal
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.classList.remove('modal-open');
+      modalMedia.innerHTML = '';
+    }
+    closeBtn.onclick = closeModal;
+    modal.onclick = (e) => e.target === modal && closeModal();
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+
+     window.onscroll = () => {
+            document.getElementById('navbar').classList.toggle('shadow-xl', window.scrollY > 50);
+        };
+
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        
+        // Optional: Change icon to X when open
+        const icon = menuToggle.querySelector('i');
+        if (mobileMenu.classList.contains('hidden')) {
+            icon.classList.replace('fa-times', 'fa-bars');
+        } else {
+            icon.classList.replace('fa-bars', 'fa-times');
+        }
+    });
+
+    document.getElementById("ig-btn").addEventListener("click", function() {
+    window.open('https://www.instagram.com/_capital_letter_/', "_blank");
+    });
+
+  </script>
+</body>
+</html>
